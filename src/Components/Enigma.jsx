@@ -8,48 +8,53 @@ const Enigma = () => {
     const [isEraserMode, setIsEraserMode] = useState(false); // State to toggle between draw and erase
 
     useEffect(() => {
-        const canvases = document.querySelectorAll('.sign-canvas');
-        const contexts = Array.from(canvases).map(canvas => canvas.getContext('2d'));
-        setCanvasContexts(contexts);
+    const canvases = document.querySelectorAll('.sign-canvas');
+    const contexts = Array.from(canvases).map(canvas => canvas.getContext('2d'));
+    setCanvasContexts(contexts);
 
-        const devicePixelRatio = window.devicePixelRatio || 1;
+    const devicePixelRatio = window.devicePixelRatio || 1;
 
-        // Resize canvas and restore drawing from localStorage
-        const resizeCanvas = () => {
-            if (videoRef.current) {
-                canvases.forEach((canvas, index) => {
-                    const width = videoRef.current.offsetWidth;
-                    const height = 100; // Height of the signature area
+    // Resize canvas and restore drawing from localStorage
+    const resizeCanvas = () => {
+        if (videoRef.current) {
+            canvases.forEach((canvas, index) => {
+                const width = videoRef.current.offsetWidth;
+                const height = 100; // Height of the signature area
 
-                    canvas.width = width * devicePixelRatio;
-                    canvas.height = height * devicePixelRatio;
-                    canvas.style.width = `${width}px`;
-                    canvas.style.height = `${height}px`;
+                // Save current canvas state before resizing
+                const savedImage = canvas.toDataURL();
 
-                    const context = canvas.getContext('2d');
-                    if (context) {
-                        context.scale(devicePixelRatio, devicePixelRatio);
-                    }
+                // Resize canvas
+                canvas.width = width * devicePixelRatio;
+                canvas.height = height * devicePixelRatio;
+                canvas.style.width = `${width}px`;
+                canvas.style.height = `${height}px`;
 
-                    // Restore the drawing from localStorage if available
-                    const savedImage = localStorage.getItem(`canvas${index}`);
-                    if (savedImage) {
-                        const img = new Image();
-                        img.src = savedImage;
-                        img.onload = () => {
-                            context.drawImage(img, 0, 0);
-                        };
-                    }
-                });
-            }
-        };
+                const context = canvas.getContext('2d');
+                if (context) {
+                    context.scale(devicePixelRatio, devicePixelRatio);
 
-        resizeCanvas();
+                    // Clear the canvas before restoring the saved image
+                    context.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Listen for window resize to adjust the canvas size dynamically
-        window.addEventListener('resize', resizeCanvas);
-        return () => window.removeEventListener('resize', resizeCanvas);
-    }, []);
+                    // Restore the saved drawing
+                    const img = new Image();
+                    img.src = savedImage;
+                    img.onload = () => {
+                        context.drawImage(img, 0, 0);
+                    };
+                }
+            });
+        }
+    };
+
+    resizeCanvas();
+
+    // Listen for window resize to adjust the canvas size dynamically
+    window.addEventListener('resize', resizeCanvas);
+    return () => window.removeEventListener('resize', resizeCanvas);
+}, []);
+
 
     const saveCanvas = (index) => {
         const canvas = document.querySelectorAll('.sign-canvas')[index];
