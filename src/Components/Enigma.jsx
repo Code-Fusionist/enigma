@@ -5,7 +5,7 @@ const Enigma = () => {
     const videoRef = useRef(null);
     const [isDrawing, setIsDrawing] = useState(false);
     const [canvasContexts, setCanvasContexts] = useState([]);
-    const [isEraserMode, setIsEraserMode] = useState(false); // State to toggle between draw and erase
+    const [isEraserMode, setIsEraserMode] = useState(false);
 
     useEffect(() => {
         const canvases = document.querySelectorAll('.sign-canvas');
@@ -14,12 +14,11 @@ const Enigma = () => {
 
         const devicePixelRatio = window.devicePixelRatio || 1;
 
-        // Resize canvas and restore drawing from localStorage
         const resizeCanvas = () => {
             if (videoRef.current) {
                 canvases.forEach((canvas, index) => {
                     const width = videoRef.current.offsetWidth;
-                    const height = 100; // Height of the signature area
+                    const height = 100;
 
                     canvas.width = width * devicePixelRatio;
                     canvas.height = height * devicePixelRatio;
@@ -31,7 +30,7 @@ const Enigma = () => {
                         context.scale(devicePixelRatio, devicePixelRatio);
                     }
 
-                    // Restore the drawing from localStorage if available
+                    // Restore drawing from localStorage
                     const savedImage = localStorage.getItem(`canvas${index}`);
                     if (savedImage) {
                         const img = new Image();
@@ -46,7 +45,6 @@ const Enigma = () => {
 
         resizeCanvas();
 
-        // Listen for window resize to adjust the canvas size dynamically
         window.addEventListener('resize', resizeCanvas);
         return () => window.removeEventListener('resize', resizeCanvas);
     }, []);
@@ -54,12 +52,12 @@ const Enigma = () => {
     const saveCanvas = (index) => {
         const canvas = document.querySelectorAll('.sign-canvas')[index];
         const dataURL = canvas.toDataURL();
-        localStorage.setItem(`canvas${index}`, dataURL); // Save the drawing as an image in localStorage
+        localStorage.setItem(`canvas${index}`, dataURL);
     };
 
     const handleMouseDown = (e, index) => {
         setIsDrawing(true);
-        draw(e, index); // Start drawing or erasing immediately
+        draw(e, index);
     };
 
     const handleMouseMove = (e, index) => {
@@ -70,8 +68,8 @@ const Enigma = () => {
     const handleMouseUp = (index) => {
         setIsDrawing(false);
         if (canvasContexts[index]) {
-            canvasContexts[index].beginPath(); // Stop drawing
-            saveCanvas(index); // Save the canvas drawing to local storage
+            canvasContexts[index].beginPath();
+            saveCanvas(index);
         }
     };
 
@@ -88,13 +86,12 @@ const Enigma = () => {
         context.lineWidth = 3;
         context.lineCap = 'round';
 
-        // Use red color for drawing and white (eraser) to clear
         if (isEraserMode) {
-            context.globalCompositeOperation = 'destination-out'; // Use "destination-out" for erasing
-            context.lineWidth = 10; // Eraser width (larger than pen)
+            context.globalCompositeOperation = 'destination-out';
+            context.lineWidth = 10;
         } else {
-            context.globalCompositeOperation = 'source-over'; // Use normal draw mode
-            context.strokeStyle = 'red'; // Pen color
+            context.globalCompositeOperation = 'source-over';
+            context.strokeStyle = 'red';
         }
 
         context.lineTo(offsetX, offsetY);
@@ -104,13 +101,13 @@ const Enigma = () => {
     };
 
     const handleTouchStart = (e, index) => {
-        e.preventDefault(); // Prevent scrolling
+        e.preventDefault();
         setIsDrawing(true);
-        drawTouch(e, index); // Start drawing or erasing immediately
+        drawTouch(e, index);
     };
 
     const handleTouchMove = (e, index) => {
-        e.preventDefault(); // Prevent scrolling
+        e.preventDefault();
         if (!isDrawing) return;
         drawTouch(e, index);
     };
@@ -118,8 +115,8 @@ const Enigma = () => {
     const handleTouchEnd = (index) => {
         setIsDrawing(false);
         if (canvasContexts[index]) {
-            canvasContexts[index].beginPath(); // Stop drawing
-            saveCanvas(index); // Save the canvas drawing to local storage
+            canvasContexts[index].beginPath();
+            saveCanvas(index);
         }
     };
 
@@ -138,11 +135,11 @@ const Enigma = () => {
         context.lineCap = 'round';
 
         if (isEraserMode) {
-            context.globalCompositeOperation = 'destination-out'; // Erasing mode
-            context.lineWidth = 10; // Eraser width
+            context.globalCompositeOperation = 'destination-out';
+            context.lineWidth = 10;
         } else {
-            context.globalCompositeOperation = 'source-over'; // Drawing mode
-            context.strokeStyle = 'red'; // Pen color
+            context.globalCompositeOperation = 'source-over';
+            context.strokeStyle = 'red';
         }
 
         context.lineTo(offsetX, offsetY);
@@ -154,17 +151,15 @@ const Enigma = () => {
     return (
         <div className="video-container">
             <video ref={videoRef} className="video-player" controls>
-            <source src="/typo invite_1.mp4" type="video/mp4" />
+                <source src="/typo invite_1.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
             </video>
 
-            {/* Tools for pen and eraser */}
             <div className="tools" style={{ margin: '20px 0' }}>
                 <button onClick={() => setIsEraserMode(false)} style={{ marginRight: '10px' }}>Pen</button>
                 <button onClick={() => setIsEraserMode(true)}>Eraser</button>
             </div>
 
-            {/* Editable Table */}
             <table className="editable-table">
                 <thead>
                     <tr>
@@ -174,188 +169,23 @@ const Enigma = () => {
                     </tr>
                 </thead>
                 <tbody>
-                <tr>
-    <td contentEditable="true" className="editable-cell">Prof.(Dr.) Ravi K Dhar</td>
-    <td className="editable-cell">Director</td>
-    <td>
-        <canvas
-            className="sign-canvas"
-            onMouseDown={(e) => handleMouseDown(e, 0)}
-            onMouseMove={(e) => handleMouseMove(e, 0)}
-            onMouseUp={() => handleMouseUp(0)}
-            onTouchStart={(e) => handleTouchStart(e, 0)}
-            onTouchMove={(e) => handleTouchMove(e, 0)}
-            onTouchEnd={() => handleTouchEnd(0)}
-        ></canvas>
-    </td>
-</tr>
-<tr>
-    <td contentEditable="true" className="editable-cell">Prof.(Dr.) Meenakshi Narula</td>
-    <td contentEditable="true" className="editable-cell">HOD (IT-Deptt.) &COE</td>
-    <td>
-        <canvas
-            className="sign-canvas"
-            onMouseDown={(e) => handleMouseDown(e, 1)}
-            onMouseMove={(e) => handleMouseMove(e, 1)}
-            onMouseUp={() => handleMouseUp(1)}
-            onTouchStart={(e) => handleTouchStart(e, 1)}
-            onTouchMove={(e) => handleTouchMove(e, 1)}
-            onTouchEnd={() => handleTouchEnd(1)}
-        ></canvas>
-    </td>
-</tr>
-<tr>
-    <td contentEditable="true" className="editable-cell">Dr. Harsha Ratnani</td>
-    <td contentEditable="true" className="editable-cell">Associate Professor
-    </td>
-    <td>
-        <canvas
-            className="sign-canvas"
-            onMouseDown={(e) => handleMouseDown(e, 2)}
-            onMouseMove={(e) => handleMouseMove(e, 2)}
-            onMouseUp={() => handleMouseUp(2)}
-            onTouchStart={(e) => handleTouchStart(e, 2)}
-            onTouchMove={(e) => handleTouchMove(e, 2)}
-            onTouchEnd={() => handleTouchEnd(2)}
-        ></canvas>
-    </td>
-</tr>
-<tr>
-    <td contentEditable="true" className="editable-cell">Mr. Deepak Sharma</td>
-    <td contentEditable="true" className="editable-cell">NAAC IQAC Coordinator, Assistant Professo</td>
-    <td>
-        <canvas
-            className="sign-canvas"
-            onMouseDown={(e) => handleMouseDown(e, 3)}
-            onMouseMove={(e) => handleMouseMove(e, 3)}
-            onMouseUp={() => handleMouseUp(3)}
-            onTouchStart={(e) => handleTouchStart(e, 3)}
-            onTouchMove={(e) => handleTouchMove(e, 3)}
-            onTouchEnd={() => handleTouchEnd(3)}
-        ></canvas>
-    </td>
-</tr>
-<tr>
-    <td contentEditable="true" className="editable-cell">Dr. Puja Munjal</td>
-    <td contentEditable="true" className="editable-cell">Associate Professor
-    </td>
-    <td>
-        <canvas
-            className="sign-canvas"
-            onMouseDown={(e) => handleMouseDown(e, 4)}
-            onMouseMove={(e) => handleMouseMove(e, 4)}
-            onMouseUp={() => handleMouseUp(4)}
-            onTouchStart={(e) => handleTouchStart(e, 4)}
-            onTouchMove={(e) => handleTouchMove(e, 4)}
-            onTouchEnd={() => handleTouchEnd(4)}
-        ></canvas>
-    </td>
-</tr>
-<tr>
-    <td contentEditable="true" className="editable-cell">Dr. Anisha Tandon</td>
-    <td contentEditable="true" className="editable-cell">Assistant Professor</td>
-    <td>
-        <canvas
-            className="sign-canvas"
-            onMouseDown={(e) => handleMouseDown(e, 5)}
-            onMouseMove={(e) => handleMouseMove(e, 5)}
-            onMouseUp={() => handleMouseUp(5)}
-            onTouchStart={(e) => handleTouchStart(e, 5)}
-            onTouchMove={(e) => handleTouchMove(e, 5)}
-            onTouchEnd={() => handleTouchEnd(5)}
-        ></canvas>
-    </td>
-</tr>
-<tr>
-    <td contentEditable="true" className="editable-cell">Dr. Abha Pandey</td>
-    <td contentEditable="true" className="editable-cell">Assistant Professor</td>
-    <td>
-        <canvas
-            className="sign-canvas"
-            onMouseDown={(e) => handleMouseDown(e, 6)}
-            onMouseMove={(e) => handleMouseMove(e, 6)}
-            onMouseUp={() => handleMouseUp(6)}
-            onTouchStart={(e) => handleTouchStart(e, 6)}
-            onTouchMove={(e) => handleTouchMove(e, 6)}
-            onTouchEnd={() => handleTouchEnd(6)}
-        ></canvas>
-    </td>
-</tr>
-<tr>
-    <td contentEditable="true" className="editable-cell">Ms. Neha Chhabra</td>
-    <td contentEditable="true" className="editable-cell">Assistant Professor</td>
-    <td>
-        <canvas
-            className="sign-canvas"
-            onMouseDown={(e) => handleMouseDown(e, 7)}
-            onMouseMove={(e) => handleMouseMove(e, 7)}
-            onMouseUp={() => handleMouseUp(7)}
-            onTouchStart={(e) => handleTouchStart(e, 7)}
-            onTouchMove={(e) => handleTouchMove(e, 7)}
-            onTouchEnd={() => handleTouchEnd(7)}
-        ></canvas>
-    </td>
-</tr>
-<tr>
-    <td contentEditable="true" className="editable-cell">Dr. Priti Sharma</td>
-    <td contentEditable="true" className="editable-cell">Assistant Professor</td>
-    <td>
-        <canvas
-            className="sign-canvas"
-            onMouseDown={(e) => handleMouseDown(e, 8)}
-            onMouseMove={(e) => handleMouseMove(e, 8)}
-            onMouseUp={() => handleMouseUp(8)}
-            onTouchStart={(e) => handleTouchStart(e, 8)}
-            onTouchMove={(e) => handleTouchMove(e, 8)}
-            onTouchEnd={() => handleTouchEnd(8)}
-        ></canvas>
-    </td>
-</tr>
-<tr>
-    <td contentEditable="true" className="editable-cell">Mr. Kunal Anand</td>
-    <td contentEditable="true" className="editable-cell">Assistant Professor</td>
-    <td>
-        <canvas
-            className="sign-canvas"
-            onMouseDown={(e) => handleMouseDown(e, 9)}
-            onMouseMove={(e) => handleMouseMove(e, 9)}
-            onMouseUp={() => handleMouseUp(9)}
-            onTouchStart={(e) => handleTouchStart(e, 9)}
-            onTouchMove={(e) => handleTouchMove(e, 9)}
-            onTouchEnd={() => handleTouchEnd(9)}
-        ></canvas>
-    </td>
-</tr>
-<tr>
-    <td contentEditable="true" className="editable-cell">Ms. Rahul V Anand</td>
-    <td contentEditable="true" className="editable-cell">Assistant Professor</td>
-    <td>
-        <canvas
-            className="sign-canvas"
-            onMouseDown={(e) => handleMouseDown(e, 10)}
-            onMouseMove={(e) => handleMouseMove(e, 10)}
-            onMouseUp={() => handleMouseUp(10)}
-            onTouchStart={(e) => handleTouchStart(e, 10)}
-            onTouchMove={(e) => handleTouchMove(e, 10)}
-            onTouchEnd={() => handleTouchEnd(10)}
-        ></canvas>
-    </td>
-</tr>
-<tr>
-    <td contentEditable="true" className="editable-cell">Mr. Abhishek Gupta</td>
-    <td contentEditable="true" className="editable-cell">Assistant Professor</td>
-    <td>
-        <canvas
-            className="sign-canvas"
-            onMouseDown={(e) => handleMouseDown(e, 11)}
-            onMouseMove={(e) => handleMouseMove(e, 11)}
-            onMouseUp={() => handleMouseUp(11)}
-            onTouchStart={(e) => handleTouchStart(e, 11)}
-            onTouchMove={(e) => handleTouchMove(e, 11)}
-            onTouchEnd={() => handleTouchEnd(11)}
-        ></canvas>
-    </td>
-</tr>
+                    {['Prof.(Dr.) Ravi K Dhar', 'Prof.(Dr.) Meenakshi Narula', 'Dr. Harsha Ratnani', 'Mr. Deepak Sharma', 'Dr. Puja Munjal', 'Dr. Anisha Tandon', 'Dr. Abha Pandey', 'Ms. Neha Chhabra', 'Dr. Priti Sharma'].map((name, index) => (
+                        <tr key={index}>
+                            <td contentEditable="true" className="editable-cell">{name}</td>
+                            <td contentEditable="true" className="editable-cell">Designation {index + 1}</td>
+                            <td>
+                                <canvas
+                                    className="sign-canvas"
+                                    onMouseDown={(e) => handleMouseDown(e, index)}
+                                    onMouseMove={(e) => handleMouseMove(e, index)}
+                                    onMouseUp={() => handleMouseUp(index)}
+                                    onTouchStart={(e) => handleTouchStart(e, index)}
+                                    onTouchMove={(e) => handleTouchMove(e, index)}
+                                    onTouchEnd={() => handleTouchEnd(index)}
+                                ></canvas>
+                            </td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
         </div>
