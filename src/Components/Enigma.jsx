@@ -20,24 +20,26 @@ const Enigma = () => {
                     const width = videoRef.current.offsetWidth;
                     const height = 100;
 
-                    canvas.width = width * devicePixelRatio;
-                    canvas.height = height * devicePixelRatio;
-                    canvas.style.width = `${width}px`;
-                    canvas.style.height = `${height}px`;
-
                     const context = canvas.getContext('2d');
-                    if (context) {
-                        context.scale(devicePixelRatio, devicePixelRatio);
-                    }
 
-                    // Restore drawing from localStorage
-                    const savedImage = localStorage.getItem(`canvas${index}`);
-                    if (savedImage) {
-                        const img = new Image();
-                        img.src = savedImage;
-                        img.onload = () => {
-                            context.drawImage(img, 0, 0);
-                        };
+                    // Only resize if canvas is blank (avoids overwriting drawings)
+                    if (context && !context.__isDrawing) {
+                        canvas.width = width * devicePixelRatio;
+                        canvas.height = height * devicePixelRatio;
+                        canvas.style.width = `${width}px`;
+                        canvas.style.height = `${height}px`;
+
+                        context.scale(devicePixelRatio, devicePixelRatio);
+
+                        // Restore drawing from localStorage only if canvas is blank
+                        const savedImage = localStorage.getItem(`canvas${index}`);
+                        if (savedImage) {
+                            const img = new Image();
+                            img.src = savedImage;
+                            img.onload = () => {
+                                context.drawImage(img, 0, 0);
+                            };
+                        }
                     }
                 });
             }
@@ -98,6 +100,9 @@ const Enigma = () => {
         context.stroke();
         context.beginPath();
         context.moveTo(offsetX, offsetY);
+
+        // Mark canvas as drawing in progress to avoid overwriting it during resize
+        context.__isDrawing = true;
     };
 
     const handleTouchStart = (e, index) => {
@@ -146,6 +151,9 @@ const Enigma = () => {
         context.stroke();
         context.beginPath();
         context.moveTo(offsetX, offsetY);
+
+        // Mark canvas as drawing in progress
+        context.__isDrawing = true;
     };
 
     return (
