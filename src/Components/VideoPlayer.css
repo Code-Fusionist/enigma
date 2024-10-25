@@ -1,64 +1,108 @@
+.container {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
 .video-container {
-    position: relative;
-    display: inline-block;
-    width: 100%; /* Ensures the video container uses full width */
+  width: 100vw;
+  height: 100vh; /* Adjusted for better fit on mobile */
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.video-player {
-    width: 100%; /* Responsive video player */
-    height: auto;
-    border: 1px solid #ccc; /* Optional: add a border for clarity */
-    margin-bottom: 5px; /* Reduced space between video and table */
+.video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.editable-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 0; /* Remove margin to reduce space */
+.tool-selection {
+  text-align: center;
+  margin: 20px 0;
 }
 
-.editable-table th,
-.editable-table td {
-    border: 1px solid #ccc;
-    padding: 10px;
-    text-align: left;
+.tool-selection button {
+  margin: 0 10px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  border: 1px solid #000;
 }
 
-.editable-cell {
-    cursor: text; /* Show a text cursor for editable cells */
+.tool-selection .active {
+  background-color: #000;
+  color: #fff;
 }
 
-.sign-canvas {
-    width: 100%; /* Set the canvas width to fill the table cell */
-    height: 100px; /* Increased height for signature area */
-    border: 1px solid #ccc; /* Optional: border for visual clarity */
-    cursor: crosshair; /* Cursor style for drawing */
-    background-color: #f9f9f9; /* Light background for better visibility */
-    pointer-events: auto; /* Allow interaction on the canvas */
-    display: block; /* Ensure canvas behaves like a block element */
-}
-.tools {
-    display: flex;
-    justify-content: flex-start;
-    margin-bottom: 10px;
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 20px;
 }
 
-.tools button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: white;
-    cursor: pointer;
-    margin-right: 10px;
-    transition: background-color 0.3s;
+table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.tools button:hover {
-    background-color: #0056b3;
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
 }
-.sign-canvas {
-    touch-action: none; /* Prevent default touch actions */
-    border: 1px solid #ccc; /* Optional: Add border for visibility */
-    background-color: rgba(255, 255, 255, 0.5); /* Optional: Background for better visibility */
+
+th, td {
+  min-width: 100px;
+}
+
+th:nth-child(1), td:nth-child(1) {
+  width: 20%;
+}
+
+th:nth-child(2), td:nth-child(2) {
+  width: 20%;
+}
+
+th:nth-child(3), td:nth-child(3) {
+  width: 60%;
+}
+
+.signature-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.signature-pad {
+  border: 1px solid #000;
+  width: 100%; /* Ensures it takes full width */
+  height: 150px; /* Height of the signature pad */
+  box-sizing: border-box;
+  touch-action: none; /* Prevents interference with touch input */
+}
+
+.clear-btn {
+  margin-top: 10px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+  .video-container {
+    height: 40vh; /* Further reduce height on smaller screens */
+  }
+
+  th:nth-child(1), td:nth-child(1),
+  th:nth-child(2), td:nth-child(2),
+  th:nth-child(3), td:nth-child(3) {
+    width: auto; /* Allows columns to adjust based on content */
+  }
+
+  .signature-pad {
+    height: 120px; /* Smaller signature pad for mobile */
+  }
 }
